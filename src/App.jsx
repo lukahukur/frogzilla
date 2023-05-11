@@ -9,7 +9,7 @@ import {
   Environment,
   PerspectiveCamera,
 } from "@react-three/drei";
-import model from "../src/assets/baba_yagas_hut.glb";
+import model from "../public/baba_yagas_hut.glb";
 
 function Model({ url }) {
   const gltf = useLoader(GLTFLoader, url);
