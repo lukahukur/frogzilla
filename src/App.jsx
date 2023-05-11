@@ -1,87 +1,97 @@
 import React, { Suspense, useRef, useState, useEffect } from "react";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { Vector3, Quaternion, Euler } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Canvas } from "@react-three/fiber";
+import { Vector3 } from "three";
 import {
-  Html,
-  Text,
   OrbitControls,
   Environment,
   PerspectiveCamera,
 } from "@react-three/drei";
-import model from "../public/baba_yagas_hut.glb";
-
-function Model({ url }) {
-  const gltf = useLoader(GLTFLoader, url);
-  return <primitive object={gltf.scene} dispose={null} />;
-}
-
-function Scene() {
-  const textRef = useRef();
-  const [active, setActive] = useState(false);
-  const { camera } = useThree();
-
-  const target1 = new Vector3(0, 0, 5);
-  const target2 = new Vector3(10, 10, 10);
-
-  const quaternion1 = new Quaternion().setFromEuler(new Euler(0, 0, 0, "XYZ"));
-  const quaternion2 = new Quaternion().setFromEuler(
-    new Euler(0, Math.PI, 0, "XYZ")
-  );
-
-  const [targetPosition, setTargetPosition] = useState(target1);
-  const [targetQuaternion, setTargetQuaternion] = useState(quaternion1);
-
-  useEffect(() => {
-    if (active) {
-      setTargetPosition(target2);
-      setTargetQuaternion(quaternion2);
-    } else {
-      setTargetPosition(target1);
-      setTargetQuaternion(quaternion1);
-    }
-  }, [active]);
-
-  useFrame(() => {
-    camera.position.lerp(targetPosition, 0.05);
-    camera.quaternion.slerp(targetQuaternion, 0.05);
-    camera.updateProjectionMatrix();
-  });
-
-  return (
-    <group>
-      <Model url={model} />
-      <Text
-        color="black"
-        fontSize={0.2}
-        maxWidth={200}
-        lineHeight={1}
-        letterSpacing={0.02}
-        textAlign={"left"}
-        anchorX="center"
-        anchorY="middle"
-        position={[0, 0, 0]}
-        ref={textRef}
-        onClick={() => setActive(!active)}
-      >
-        {active ? "Hello world2" : "Hello world"}
-      </Text>
-    </group>
-  );
-}
+import Scene from "./components/Scene";
+import TWEEN from "@tweenjs/tween.js";
 
 export default function App() {
+  const cameraRef = useRef();
+  const [showHelloWorld2, setShowHelloWorld2] = useState(false);
+  const DURATION = 1000;
+
+  const handleHelloWorld2Click = () => {
+    if (showHelloWorld2) {
+      const targetPosition = new Vector3(
+        -5.2956657823170303,
+        2.931572680090176,
+        3.7056299030550495
+      );
+
+      const easing = TWEEN.Easing.Quadratic.InOut;
+
+      const tween = new TWEEN.Tween(cameraRef.current.position)
+        .to(targetPosition, DURATION)
+        .easing(easing)
+        .onUpdate(() => {
+          cameraRef.current.lookAt(0, 0, 0);
+        });
+
+      tween.start();
+      cameraRef.current.rotation.set(0, 0, 0);
+    } else {
+      const targetPosition = new Vector3(
+        -4.4715597108145526,
+        0.7726918437760153,
+        -1.232442542015795
+      );
+
+      const easing = TWEEN.Easing.Quadratic.InOut;
+      const tween = new TWEEN.Tween(cameraRef.current.position)
+        .to(targetPosition, DURATION)
+        .easing(easing)
+        .onUpdate(() => {
+          cameraRef.current.lookAt(0, 0, 0);
+        });
+      tween.start();
+      cameraRef.current.rotation.set(0, Math.PI, 0);
+    }
+
+    setShowHelloWorld2((e) => !e);
+  };
+
+  useEffect(() => {
+    const animate = () => {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+    };
+    animate();
+  }, []);
+
   return (
-    <Canvas style={{ width: "100vw", height: "100vh" }}>
-      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-      <ambientLight intensity={0.3} />
-      <pointLight position={[10, 10, 10]} />
-      <directionalLight position={[0, 10, 5]} intensity={1} />
-      <Suspense fallback={null}>
-        <Environment preset="sunset" background />
-        <Scene />
-      </Suspense>
-      <OrbitControls />
-    </Canvas>
+    <div className="w-screen h-screen relative">
+      <Canvas>
+        <PerspectiveCamera
+          ref={cameraRef}
+          makeDefault
+          position={[
+            -3.4715597108145526, 0.7726918437760153, -1.232442542015795,
+          ]}
+        />
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} />
+        <directionalLight position={[0, 10, 5]} intensity={1} />
+
+        <Suspense fallback={null}>
+          <Environment preset="sunset" background />
+          <Scene />
+        </Suspense>
+
+        <OrbitControls />
+      </Canvas>
+      <div
+        className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] z-10 flex items-center justify-center
+                  bg-white opacity-80  w-[200px] h-[100px]            
+        `}
+      >
+        <button onClick={handleHelloWorld2Click}>
+          {showHelloWorld2 ? "Hello world 2" : "Hello world"}
+        </button>
+      </div>
+    </div>
   );
 }
