@@ -9,6 +9,7 @@ import {
   Environment,
   PerspectiveCamera,
 } from "@react-three/drei";
+import model from "../src/assets/baba_yagas_hut.glb";
 
 function Model({ url }) {
   const gltf = useLoader(GLTFLoader, url);
@@ -49,7 +50,7 @@ function Scene() {
 
   return (
     <group>
-      <Model url={"../src/assets/baba_yagas_hut.glb"} />
+      <Model url={model} />
       <Text
         color="black"
         fontSize={0.2}
