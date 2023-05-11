@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFrame, useThree, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Vector3, Quaternion, Euler } from "three";
 import { Html } from "@react-three/drei";
 import model from "../../public/baba_yagas_hut.glb";
 
@@ -12,30 +11,27 @@ function Model({ url }) {
   return <primitive object={gltf.scene} dispose={null} />;
 }
 
-export default function Scene({
-  setTargetCameraPosition,
-  setTargetCameraQuaternion,
-}) {
-  const { camera, size } = useThree();
+export default function Scene() {
+  const { camera } = useThree();
+  const [cameraPos, setCameraPos] = useState({ x: 0, y: 0, z: 0 });
 
-  camera.rotation.set(deg2rad(0), deg2rad(-140), deg2rad(0));
-
-  const [targetTextPosition, setTargetTextPosition] = useState(
-    new Vector3(0, 0, 0)
-  );
-
-  useEffect(() => {
-    setTargetTextPosition(
-      new Vector3(size.width / 2 - 200, size.height / 2 - 50, 0)
-    );
-  }, [size.width, size.height]);
+  useFrame(() => {
+    setCameraPos({
+      x: camera.position.x.toFixed(2),
+      y: camera.position.y.toFixed(2),
+      z: camera.position.z.toFixed(2),
+    });
+  });
 
   return (
     <group>
       <Model url={model} />
-      <Html position={targetTextPosition}>
-        <div className="fixed top-40 left-0 w-[200px] h-[100px] flex justify-center items-center bg-black opacity-50 text-white ">
+      <Html>
+        <div className="absolute top-40 left-0 w-[200px] h-[100px] flex justify-center items-center bg-black opacity-50 text-white ">
           Hello world
+        </div>
+        <div className="absolute top-0 left-0 w-[200px] h-[100px] flex justify-center items-center bg-white opacity-50 text-black ">
+          Camera Position: X: {cameraPos.x}, Y: {cameraPos.y}, Z: {cameraPos.z}
         </div>
       </Html>
     </group>

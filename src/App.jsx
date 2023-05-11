@@ -11,6 +11,8 @@ import Scene, { deg2rad } from "./components/Scene";
 import TWEEN from "@tweenjs/tween.js";
 
 export default function App() {
+  const [cameraPos, setCameraPos] = useState({ x: 0, y: 0, z: 0 });
+
   const cameraRef = useRef();
   const [showHelloWorld2, setShowHelloWorld2] = useState(false);
 
@@ -19,32 +21,29 @@ export default function App() {
   const handleHelloWorld2Click = () => {
     if (showHelloWorld2) {
       const targetPosition = new Vector3(
-        -5.2956657823170303,
-        2.931572680090176,
-        1
+        4.18,
+        5.6,
+        5
       );
-
+    // Camera Position: X: 4.18, Y: 5.60, Z: 2.25
       const easing = TWEEN.Easing.Quadratic.InOut;
-
+  
       const tween = new TWEEN.Tween(cameraRef.current.position)
         .to(targetPosition, DURATION)
         .easing(easing)
         .onUpdate(() => {
-          cameraRef.current.rotation.set(
-            deg2rad(20),
-            deg2rad(-100),
-            deg2rad(0)
-          );
+          cameraRef.current.lookAt(0, 0, 0);
         });
-
+  
       tween.start();
-      cameraRef.current.rotation.set(0, 0, 0);
+      cameraRef.current.rotation.set(0, Math.PI, 0);
     } else {
       const targetPosition = new Vector3(
         -4.4715597108145526,
         0.7726918437760153,
-        -1.232442542015795
+        1.232442542015795
       );
+  // Camera Position: X: 4.18, Y: 5.60, Z: 2.25
 
       const easing = TWEEN.Easing.Quadratic.InOut;
       const tween = new TWEEN.Tween(cameraRef.current.position)
@@ -56,7 +55,7 @@ export default function App() {
       tween.start();
       cameraRef.current.rotation.set(0, Math.PI, 0);
     }
-
+  
     setShowHelloWorld2((e) => !e);
   };
 
@@ -94,13 +93,13 @@ export default function App() {
         </Suspense>
 
         <OrbitControls
-          minAzimuthAngle={deg2rad(180)}
-          maxAzimuthAngle={deg2rad(-60)}
-          maxPolarAngle={deg2rad(80)}
-          minPolarAngle={deg2rad(30)}
-          enablePan={false}
-          enableRotate
-        />
+  minDistance={1}  // minimum distance (in world units) from the target
+  maxDistance={100} // maximum distance (in world units) from the target
+  maxPolarAngle={deg2rad(80)}
+  minPolarAngle={deg2rad(30)}
+  enablePan={true}
+  enableRotate={true}
+/>
       </Canvas>
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] z-10 flex items-center justify-center
