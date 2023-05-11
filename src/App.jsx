@@ -1,17 +1,19 @@
 import React, { Suspense, useRef, useState, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Vector3 } from "three";
+import { Canvas, useThree } from "@react-three/fiber";
+import { Vector3, DirectionalLight } from "three";
 import {
   OrbitControls,
   Environment,
   PerspectiveCamera,
+  OrthographicCamera,
 } from "@react-three/drei";
-import Scene from "./components/Scene";
+import Scene, { deg2rad } from "./components/Scene";
 import TWEEN from "@tweenjs/tween.js";
 
 export default function App() {
   const cameraRef = useRef();
   const [showHelloWorld2, setShowHelloWorld2] = useState(false);
+
   const DURATION = 1000;
 
   const handleHelloWorld2Click = () => {
@@ -19,7 +21,7 @@ export default function App() {
       const targetPosition = new Vector3(
         -5.2956657823170303,
         2.931572680090176,
-        3.7056299030550495
+        1
       );
 
       const easing = TWEEN.Easing.Quadratic.InOut;
@@ -28,7 +30,11 @@ export default function App() {
         .to(targetPosition, DURATION)
         .easing(easing)
         .onUpdate(() => {
-          cameraRef.current.lookAt(0, 0, 0);
+          cameraRef.current.rotation.set(
+            deg2rad(20),
+            deg2rad(-100),
+            deg2rad(0)
+          );
         });
 
       tween.start();
@@ -68,20 +74,33 @@ export default function App() {
         <PerspectiveCamera
           ref={cameraRef}
           makeDefault
-          position={[
-            -3.4715597108145526, 0.7726918437760153, -1.232442542015795,
-          ]}
+          fov={70}
+          position={[-5.2956657823170303, 2.931572680090176, 1]}
         />
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.2} />
+        <directionalLight
+          intensity={0.5}
+          castShadow // highlight-line
+          isLight
+          shadow-mapSize-height={512}
+          shadow-mapSize-width={512}
+        />
         <pointLight position={[10, 10, 10]} />
-        <directionalLight position={[0, 10, 5]} intensity={1} />
+        <directionalLight position={[0, 10, 5]} intensity={0.2} />
 
         <Suspense fallback={null}>
-          <Environment preset="sunset" background />
-          <Scene />
+          <Environment preset="night" background />
+          <Scene receiveShadow />
         </Suspense>
 
-        <OrbitControls />
+        <OrbitControls
+          minAzimuthAngle={deg2rad(180)}
+          maxAzimuthAngle={deg2rad(-60)}
+          maxPolarAngle={deg2rad(80)}
+          minPolarAngle={deg2rad(30)}
+          enablePan={false}
+          enableRotate
+        />
       </Canvas>
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] z-10 flex items-center justify-center
