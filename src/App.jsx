@@ -10,53 +10,46 @@ import {
 import Scene, { deg2rad } from "./components/Scene";
 import TWEEN from "@tweenjs/tween.js";
 
+const pages = {
+  welcome: [-1.21, 1.28, -4.36],
+  about: [3.8, 5.99, 2.22],
+  tokenomics: [-4.47, 0.77, 1.23],
+  "Join the Voyage": [-9.74, 3.41, 2.76],
+  // "Connect with Us": "Connect with Us",
+};
+
+let pageNum = 1;
+let lastPage = Object.keys(pages).length;
+
+const DURATION = 1000;
+
+const smoothAnimation = (position, endPosition) => {
+  const easing = TWEEN.Easing.Quadratic.InOut;
+
+  const tween = new TWEEN.Tween(position)
+    .to(endPosition, DURATION)
+    .easing(easing);
+
+  tween.start();
+};
+
 export default function App() {
   const [cameraPos, setCameraPos] = useState({ x: 0, y: 0, z: 0 });
 
   const cameraRef = useRef();
-  const [showHelloWorld2, setShowHelloWorld2] = useState(false);
+  const [page, setPage] = useState(pages["welcome"]);
 
-  const DURATION = 1000;
+  useEffect(() => {
+    let t = setTimeout(() => {
+      smoothAnimation(cameraRef.current.position, new Vector3(...page));
+    });
+    return () => clearTimeout(t);
+  }, [page]);
 
-  const handleHelloWorld2Click = () => {
-    if (showHelloWorld2) {
-      const targetPosition = new Vector3(
-        4.18,
-        5.6,
-        5
-      );
-    // Camera Position: X: 4.18, Y: 5.60, Z: 2.25
-      const easing = TWEEN.Easing.Quadratic.InOut;
-  
-      const tween = new TWEEN.Tween(cameraRef.current.position)
-        .to(targetPosition, DURATION)
-        .easing(easing)
-        .onUpdate(() => {
-          cameraRef.current.lookAt(0, 0, 0);
-        });
-  
-      tween.start();
-      cameraRef.current.rotation.set(0, Math.PI, 0);
-    } else {
-      const targetPosition = new Vector3(
-        -4.4715597108145526,
-        0.7726918437760153,
-        1.232442542015795
-      );
-  // Camera Position: X: 4.18, Y: 5.60, Z: 2.25
-
-      const easing = TWEEN.Easing.Quadratic.InOut;
-      const tween = new TWEEN.Tween(cameraRef.current.position)
-        .to(targetPosition, DURATION)
-        .easing(easing)
-        .onUpdate(() => {
-          cameraRef.current.lookAt(0, 0, 0);
-        });
-      tween.start();
-      cameraRef.current.rotation.set(0, Math.PI, 0);
-    }
-  
-    setShowHelloWorld2((e) => !e);
+  const changeRoute = () => {
+    if (pageNum >= lastPage) pageNum = 0;
+    setPage(pages[Object.keys(pages)[pageNum]]);
+    pageNum++;
   };
 
   useEffect(() => {
@@ -74,40 +67,38 @@ export default function App() {
           ref={cameraRef}
           makeDefault
           fov={70}
-          position={[-5.2956657823170303, 2.931572680090176, 1]}
+          position={[-1.21, 1.28, -4.36]}
         />
-        <ambientLight intensity={0.2} />
-        <directionalLight
-          intensity={0.5}
-          castShadow // highlight-line
-          isLight
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-        />
-        <pointLight position={[10, 10, 10]} />
-        <directionalLight position={[0, 10, 5]} intensity={0.2} />
+        {/*<directionalLight*/}
+        {/*  intensity={0.5}*/}
+        {/*  color={"orange"}*/}
+        {/*  castShadow // highlight-line*/}
+        {/*  isLight*/}
+        {/*  shadow-mapSize-height={512}*/}
+        {/*  shadow-mapSize-width={512}*/}
+        {/*/>*/}
 
         <Suspense fallback={null}>
-          <Environment preset="night" background />
+          <Environment preset="dawn" background />
           <Scene receiveShadow />
         </Suspense>
-
         <OrbitControls
-  minDistance={1}  // minimum distance (in world units) from the target
-  maxDistance={100} // maximum distance (in world units) from the target
-  maxPolarAngle={deg2rad(80)}
-  minPolarAngle={deg2rad(30)}
-  enablePan={true}
-  enableRotate={true}
-/>
+          minDistance={1} // minimum distance (in world units) from the target
+          maxDistance={100} // maximum distance (in world units) from the target
+          maxPolarAngle={deg2rad(80)}
+          minPolarAngle={deg2rad(30)}
+          enablePan={true}
+          enableRotate={true}
+        />
       </Canvas>
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] z-10 flex items-center justify-center
                   bg-white opacity-80  w-[200px] h-[100px]            
         `}
       >
-        <button onClick={handleHelloWorld2Click}>
-          {showHelloWorld2 ? "Hello world 2" : "Hello world"}
+        <button onClick={changeRoute}>
+          hey
+          {/*{showHelloWorld2 ? "Hello world 2" : "Hello world"}*/}
         </button>
       </div>
     </div>
