@@ -9,13 +9,14 @@ import {
 } from "@react-three/drei";
 import Scene, { deg2rad } from "./components/Scene";
 import TWEEN from "@tweenjs/tween.js";
+import Menu from "./components/Menu.jsx";
 
 const pages = {
-  welcome: [-1.21, 1.28, -4.36],
-  about: [3.8, 5.99, 2.22],
-  tokenomics: [-4.47, 0.77, 1.23],
-  "Join the Voyage": [-9.74, 3.41, 2.76],
-  // "Connect with Us": "Connect with Us",
+  welcome: { name: "welcome", coords: [-8.1148, 1.6744, -4.9318] },
+  about: { name: "about", coords: [3.3127, 5.8648, 3.143] },
+  tokenomics: { name: "tokenomics", coords: [-5.4786, 1.0019, 1.5075] },
+  "Join the Voyage": { name: "Join the Voyage", coords: [-15.84, 2.8, 0.76] },
+  "Connect with Us": { name: "Connect with Us", coords: [-8.6, 4.01, 4.9] },
 };
 
 let pageNum = 1;
@@ -41,7 +42,10 @@ export default function App() {
 
   useEffect(() => {
     let t = setTimeout(() => {
-      smoothAnimation(cameraRef.current.position, new Vector3(...page));
+      smoothAnimation(
+        cameraRef.current.position,
+        new Vector3(page.coords[0], page.coords[1], page.coords[2])
+      );
     });
     return () => clearTimeout(t);
   }, [page]);
@@ -67,17 +71,8 @@ export default function App() {
           ref={cameraRef}
           makeDefault
           fov={70}
-          position={[-1.21, 1.28, -4.36]}
+          position={[...pages.welcome.coords]}
         />
-        {/*<directionalLight*/}
-        {/*  intensity={0.5}*/}
-        {/*  color={"orange"}*/}
-        {/*  castShadow // highlight-line*/}
-        {/*  isLight*/}
-        {/*  shadow-mapSize-height={512}*/}
-        {/*  shadow-mapSize-width={512}*/}
-        {/*/>*/}
-
         <Suspense fallback={null}>
           <Environment preset="dawn" background />
           <Scene receiveShadow />
@@ -92,14 +87,15 @@ export default function App() {
         />
       </Canvas>
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] z-10 flex items-center justify-center
-                  bg-white opacity-80  w-[200px] h-[100px]            
+        className={`
+                  fixed top-1/2 ml-3 flex-col  -translate-y-[50%] 
+                  z-10 
+                  flex items-center justify-center
+                  bg-white opacity-80  w-fit max-w-[270px] h-fit           
         `}
       >
-        <button onClick={changeRoute}>
-          hey
-          {/*{showHelloWorld2 ? "Hello world 2" : "Hello world"}*/}
-        </button>
+        <Menu page={page.name} />
+        <button onClick={changeRoute}>next</button>
       </div>
     </div>
   );
