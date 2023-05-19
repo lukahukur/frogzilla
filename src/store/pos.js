@@ -39,7 +39,7 @@ export const pages = {
   "Connect with Us": {
     id: 4,
     name: "Connect with Us",
-    coords: [-3.56009613, 0.52, -2.833346441739],
+    coords: [-3.59009613, 0.52, -2.833346441739],
     lookAt: [1, 2, 2],
     zoom: 5,
     text: "Stay updated on our wild ride. Follow us on [social media logos/links here] and join the FrogZilla family!",

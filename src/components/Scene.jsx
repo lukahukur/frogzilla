@@ -11,8 +11,10 @@ const pageNames = Object.keys(pages);
 function Model({ url, controlsRef }) {
   const pos = useStore((s) => s.position);
   const { scene, animations } = useGLTF(url);
-  const prevZoomVal = useRef(0);
+
   const { camera, gl } = useThree();
+  gl.setPixelRatio(0.85);
+
   scene.traverse((node) => {
     if (node.isMesh) {
       node.castShadow = true;
@@ -61,6 +63,7 @@ export default function Scene({ controlsRef, changePos, currentPage }) {
       {pageNames.map((e, i) => {
         return (
           <Html
+            className={"sm:flex block"}
             key={i}
             position={[
               pages[e].coords[0],
@@ -68,17 +71,18 @@ export default function Scene({ controlsRef, changePos, currentPage }) {
               pages[e].coords[2],
             ]}
           >
-            <div className={"fixed -ml-[10px] outline-none"}>
+            <div className={"outline-none w-fit"}>
               <Button onClick={() => changePos(pages[Object.keys(pages)[i]])}>
                 {i + 1}
               </Button>
             </div>
+
             <section
               style={{
                 display: currentPage === pages[e].name ? "grid" : "none",
               }}
-              className={`bg-black text-white ml-6 w-[220px] pt-1 pb-2 px-2 rounded-lg bg-opacity-90
-                 [&>p]:text-xs grid-rows-1 gap-[2px]
+              className={`bg-black text-white w-[220px] pt-1 pb-2 px-2 rounded-lg bg-opacity-90
+                 [&>p]:text-xs grid-rows-1 gap-[2px] sm:ml-2 sm:mt-0 mt-2
                 `}
             >
               <h2>{pages[e].name}</h2>

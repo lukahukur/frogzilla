@@ -5,6 +5,7 @@ import Scene from "./components/Scene";
 import { pages, useStore } from "./store/pos";
 import left from "./assets/caret-left-solid.svg";
 import right from "./assets/caret-right-solid.svg";
+import preloader from "./assets/loader.svg";
 
 let pageNum = 0;
 let lastPage = Object.keys(pages).length;
@@ -79,8 +80,10 @@ export default function App() {
 
 const Fallback = () => {
   return (
-    <div className={"w-full h-screen flex items-center justify-center"}>
-      HEEy
+    <div
+      className={`transition-opacity opacity-100 w-full h-screen flex items-center justify-center bg-indigo-950 absolute left-0 top-0 z-[100000]`}
+    >
+      <img src={preloader} alt={"preloader"} className={"bg-black"} />
     </div>
   );
 };
