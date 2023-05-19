@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Html } from "@react-three/drei";
 import model from "../../public/baba_yagas_hut.glb";
@@ -7,7 +7,7 @@ import { useSpring } from "react-spring";
 import { useStore, pages } from "../store/pos.js";
 
 export const DEG2RAD = (degrees) => degrees * (Math.PI / 180);
-
+const pageNames = Object.keys(pages);
 function Model({ url, controlsRef }) {
   const pos = useStore((s) => s.position);
   const { scene, animations } = useGLTF(url);
@@ -38,18 +38,8 @@ function Model({ url, controlsRef }) {
     controlsRef.current.dolly(pos.zoom, true);
   }, [pos]);
 
-  useEffect(() => {
-    controlsRef.current.dolly(5, true);
-    prevZoomVal.current = camera.zoom;
-  }, [camera.zoom]);
-
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      // console.clear();
-      // console.log(controlsRef.current._camera.position);
-    }, 1000);
-
-    return () => clearInterval(interval);
+    controlsRef.current.dolly(1, true);
   }, []);
 
   let mixer = new THREE.AnimationMixer(scene);
@@ -65,23 +55,39 @@ function Model({ url, controlsRef }) {
   return <primitive object={scene} scale="1" />;
 }
 
-export default function Scene({ controlsRef }) {
+export default function Scene({ controlsRef, changePos, currentPage }) {
   return (
     <group>
-      <Html>
-        <div className={"fixed -ml-[10px] outline-none"}>
-          <Button onClick={() => alert("oke")}>1</Button>
-        </div>
-        <div className={"sticky left-1/2 outline-none"}>
-          <Button onClick={() => alert("oke")}>2</Button>
-        </div>
-        <div className={"sticky left-1/2 outline-none"}>
-          <Button onClick={() => alert("oke")}>3</Button>
-        </div>
-        <div className={"sticky left-1/2 outline-none"}>
-          <Button onClick={() => alert("oke")}>4</Button>
-        </div>
-      </Html>
+      {pageNames.map((e, i) => {
+        return (
+          <Html
+            key={i}
+            position={[
+              pages[e].coords[0],
+              pages[e].coords[1],
+              pages[e].coords[2],
+            ]}
+          >
+            <div className={"fixed -ml-[10px] outline-none"}>
+              <Button onClick={() => changePos(pages[Object.keys(pages)[i]])}>
+                {i + 1}
+              </Button>
+            </div>
+            <section
+              style={{
+                display: currentPage === pages[e].name ? "grid" : "none",
+              }}
+              className={`bg-black text-white ml-6 w-[220px] pt-1 pb-2 px-2 rounded-lg bg-opacity-90
+                 [&>p]:text-xs grid-rows-1 gap-[2px]
+                `}
+            >
+              <h2>{pages[e].name}</h2>
+              <p>{pages[e].text}</p>
+            </section>
+          </Html>
+        );
+      })}
+
       <Model url={model} controlsRef={controlsRef} />
     </group>
   );
@@ -91,8 +97,10 @@ const Button = ({ children, onClick }) => {
   return (
     <button
       style={{ outline: "none" }}
-      className={`rounded-full bg-black text-white h-5 w-5 flex items-center justify-center m-0 p-0
-     outline-none
+      className={`
+     rounded-full bg-black bg-opacity-80 text-white h-5 w-5 flex items-center justify-center m-0 p-0
+     outline-none border-2 p-[10px] border-neutral-400 text-xs
+     
         `}
       onClick={() => onClick()}
     >

@@ -1,42 +1,64 @@
 import { create } from "zustand";
+
 export const pages = {
   welcome: {
-    name: "welcome",
-    coords: [-2.19146121074683, 1.24673481524538, -0.79880155505091],
+    id: 0,
+    name: "Welcome",
+    coords: [-1.58, 1.1, -0.24],
     lookAt: [-7, 2, -4],
     zoom: 5,
+    text: "Leap into the meme madness with FrogZilla! Our token is all about laughter, memes, and a wild crypto ride.",
   },
   about: {
-    name: "about",
-    coords: [3.2903, 5.211, 2.1305],
-    lookAt: [4.1998, 5.6205, 2.2013], //
-    zoom: 4,
+    id: 1,
+    name: "About",
+    coords: [2.1903, 4.9, 1.8305],
+    lookAt: [9, 6, 2], //
+    zoom: 5,
+    text: "FrogZilla: a meme token with zero utility and infinite fun. Join our whimsical adventure in the crypto universe.",
   },
   tokenomics: {
-    name: "tokenomics",
-    coords: [-5.9577, 3.2071, 3.6197],
+    id: 2,
+    name: "Tokenomics",
+    coords: [-5.9977, 2.8071, 3.3197],
     lookAt: [0, 4, 1],
     zoom: 4,
+    text:
+      "Total Supply: 1 Quadrillion FrogZilla tokens\n" +
+      "Distribution: 60% Burned, 30% for Liquidity, 10% for Community\n" +
+      "Transaction Tax: 5% (4% to holders, 1% to community events)",
   },
   "Join the Voyage": {
+    id: 3,
     name: "Join the Voyage",
-    coords: [-12.7632, 1, 0.2507],
-    lookAt: [0, 2, 1],
+    coords: [-11.3, 1, -1],
+    lookAt: [-1, 2, 6],
     zoom: 9,
+    text: "Hop aboard the FrogZilla boat! We're here for the laughs, camaraderie, and shared meme madness.",
   },
   "Connect with Us": {
+    id: 4,
     name: "Connect with Us",
-    coords: [-3.70009613, 0.5, -3.233346441739],
+    coords: [-3.56009613, 0.52, -2.833346441739],
     lookAt: [1, 2, 2],
-    zoom: 5.5,
+    zoom: 5,
+    text: "Stay updated on our wild ride. Follow us on [social media logos/links here] and join the FrogZilla family!",
   },
 };
 
+let pageNum = 0;
+let lastPage = Object.keys(pages).length;
+
 export const useStore = create((set) => ({
   position: {
-    coords: [0, 1, 0],
+    id: -1,
+    coords: [-3, 1, -4],
     lookAt: [-2.7356018811516105, 1.2021616742506412, -14.490978198466104],
-    zoom: 1,
+    zoom: 0,
   },
   changePosition: (coords) => set((state) => ({ position: coords })),
 }));
+
+export const PageText = [
+  "Leap into the meme madness with FrogZilla! Our token is all about laughter, memes, and a wild crypto ride.",
+];
