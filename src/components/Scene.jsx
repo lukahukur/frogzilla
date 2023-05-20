@@ -13,7 +13,6 @@ function Model({ url, controlsRef }) {
   const { scene, animations } = useGLTF(url);
 
   const { camera, gl } = useThree();
-  gl.setPixelRatio(0.85);
 
   scene.traverse((node) => {
     if (node.isMesh) {
@@ -81,7 +80,7 @@ export default function Scene({ controlsRef, changePos, currentPage }) {
               style={{
                 display: currentPage === pages[e].name ? "grid" : "none",
               }}
-              className={`bg-black text-white w-[220px] pt-1 pb-2 px-2 rounded-lg bg-opacity-90
+              className={`bg-black text-white max-w-[220px] sm:w-[220px] w-[170px]  pt-1 pb-2 px-2 rounded-lg bg-opacity-90
                  [&>p]:text-xs grid-rows-1 gap-[2px] sm:ml-2 sm:mt-0 mt-2
                 `}
             >
