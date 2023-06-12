@@ -6,6 +6,7 @@ import { pages, useStore } from "./store/pos";
 import left from "./assets/caret-left-solid.svg";
 import right from "./assets/caret-right-solid.svg";
 import preloader from "./assets/loader.svg";
+import envr from "../public/syferfontein_1d_clear_puresky_1k.hdr";
 
 let pageNum = 0;
 let lastPage = Object.keys(pages).length;
@@ -36,13 +37,23 @@ export default function App() {
     <div className="w-screen h-screen relative">
       <Suspense fallback={<Fallback />}>
         <Canvas shadows>
-          <Environment preset="dawn" background />
+          <Environment files={envr} background={true} />
           <Scene
             controlsRef={controlsRef}
             changePos={changePos}
             currentPage={page.name}
           />
-
+          <directionalLight
+            castShadow={true}
+            position={[2.5, 7, 4]}
+            color={"orange"}
+            shadow-mapSize={[1024, 1024]}
+          >
+            <orthographicCamera
+              attach="shadow-camera"
+              args={[-10, 10, 10, -10]}
+            />
+          </directionalLight>
           <CameraControls
             enabled
             ref={controlsRef}

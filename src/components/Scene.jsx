@@ -17,6 +17,7 @@ function Model({ url, controlsRef }) {
   scene.traverse((node) => {
     if (node.isMesh) {
       node.castShadow = true;
+      node.receiveShadow = true;
     }
   });
 
